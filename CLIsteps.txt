@@ -1,0 +1,40 @@
+#Set AWS Profile in us-east-2
+aws configure set region us-east-2
+
+#Create Cluster
+eksctl create cluster --name simple-jwt-api --region us-east-2
+
+#Update Kube Config
+aws eks update-kubeconfig --name simple-jwt-api --region us-east-2
+
+#Get Nodes
+kubectl get nodes
+
+#Get your AWS account id:
+aws sts get-caller-identity --query Account --output text
+
+# Create IAM Role
+aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document file://trust.json --output text --query 'Role.Arn'
+
+# Apply Policy on IAM Role
+aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file://iam-role-policy.json
+
+
+
+#get the current ConfigMap
+kubectl get -n kube-system configmap/aws-auth -o yaml > aws-auth-patch.yml
+
+#Update cluster's configmap
+kubectl patch configmap/aws-auth -n kube-system --patch "$(cat aws-auth-patch.yml)"
+
+#GitHub token: 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
+
+#Put secret into AWS Parameter Store
+aws ssm put-parameter --name JWT_SECRET --overwrite --value "loveJWTSecret" --type SecureString
+
+#delete roles
+aws iam delete-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe
+aws iam delete-role --role-name UdacityFlaskDeployCBKubectlRole --region=us-east-2
+
+#Delete Cluster
+eksctl delete cluster simple-jwt-api  --region=us-east-2
