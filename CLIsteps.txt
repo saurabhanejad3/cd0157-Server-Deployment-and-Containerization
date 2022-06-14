@@ -38,3 +38,5 @@ aws iam delete-role --role-name UdacityFlaskDeployCBKubectlRole --region=us-east
 
 #Delete Cluster
 eksctl delete cluster simple-jwt-api  --region=us-east-2
+
+eksctl delete cluster --region=us-east-2 --name=simple-jwt-api
