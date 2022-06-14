@@ -27,7 +27,7 @@ kubectl get -n kube-system configmap/aws-auth -o yaml > aws-auth-patch.yml
 #Update cluster's configmap
 kubectl patch configmap/aws-auth -n kube-system --patch "$(cat aws-auth-patch.yml)"
 
-#GitHub token: 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
+#GitHub token: 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
 
 #Put secret into AWS Parameter Store
 aws ssm put-parameter --name JWT_SECRET --overwrite --value "loveJWTSecret" --type SecureString
