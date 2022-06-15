@@ -2,10 +2,13 @@
 aws configure set region us-east-2
 
 #Create Cluster
-eksctl create cluster --name simple-jwt-api --region us-east-2
+eksctl create cluster --name simple-jwt-api --region us-east-2 --profile anejas-uda-profile
 
 #Update Kube Config
 aws eks update-kubeconfig --name simple-jwt-api --region us-east-2
+
+aws eks update-kubeconfig --name simple-jwt-api --region us-east-2 --role-arn arn:aws:iam::730950150977:role/UdacityFlaskDeployCBKubectlRole
+
 
 #Get Nodes
 kubectl get nodes
@@ -30,7 +33,7 @@ kubectl patch configmap/aws-auth -n kube-system --patch "$(cat aws-auth-patch.ym
 #GitHub token: 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
 
 #Put secret into AWS Parameter Store
-aws ssm put-parameter --name JWT_SECRET --overwrite --value "loveJWTSecret" --type SecureString
+aws ssm put-parameter --name JWT_SECRET --value "YourJWTSecret" --type  SecureString --overwrite
 
 #delete roles
 aws iam delete-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe
